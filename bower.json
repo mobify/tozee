@@ -1,0 +1,25 @@
+{
+  "name": "tozee",
+  "version": "0.1",
+  "homepage": "https://github.com/mobify/tozee",
+  "authors": [
+    "Mobify <jobs@mobify.com>"
+  ],
+  "description": "A responsive, mobile first scrolling lists alphabetic bar",
+  "main": "build/tozee.min.js",
+  "keywords": [
+    "tozee",
+    "scroll",
+    "alphabetic",
+    "abc",
+    "bar",
+    "mobile",
+    "mobify"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components"
+  ]
+}
