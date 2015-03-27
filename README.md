@@ -39,7 +39,7 @@ A mobile-first alphabetic scroll jumping list
 
 Constructs the alphabetic bar with options.
 
-    $('.m-scooch').scooch({
+    $('.m-tozee').tozee({
         alphaSet: ['#', 'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
         skipLetters: true,
       , classPrefix: 'm-'
