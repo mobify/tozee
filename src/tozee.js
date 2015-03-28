@@ -87,11 +87,15 @@
                 barHTML += '<li class="' + self._getClass('letter') + '"  data-tozee="' + letter + '">' + letter + '</li>';
             });
 
-
             barHTML += '</ul>';
 
             this.$bar = $(barHTML);
             this.$bar.appendTo(this.$element);
+
+            var $barLetters = this.$bar.find('.' + this._getClass('letter'));
+            $barLetters.css({
+                height: (100 / $barLetters.length) + '%'
+            });
         };
 
 
@@ -139,6 +143,7 @@
         };
 
         Tozee.prototype._scrollHandler = function() {
+            var self = this;
             var top = window.pageYOffset;
             var limits = this._getLimits();
             var stickyClass = this._getClass('sticky');
@@ -151,19 +156,22 @@
                 this.$bar
                     .removeClass(stickyClass)
                     .css({
-                        top: 0
+                        top: 0,
+                        bottom: 'auto'
                     });
             } else if (top > limits.bottom && limits.bottom > limits.top) {
                 this.$bar
                     .removeClass(stickyClass)
                     .css({
-                        top: limits.bottom - limits.top
+                        top: 'auto',
+                        bottom: 0
                     });
             } else {
                 this.$bar
                     .addClass(stickyClass)
                     .css({
-                        top: 0
+                        top: 0,
+                        bottom: 0
                     });
             }
         };

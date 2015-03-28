@@ -77,6 +77,7 @@ The following mobile browsers are fully supported:
 | Browser           | Version |
 |-------------------|---------|
 | Mobile Safari     | 6.0+    |
+| Android           | 4.1+    |
 
 ## Building
 ### Requirements

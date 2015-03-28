@@ -1,6 +1,11 @@
 .m-tozee {
     position: relative;
     overflow: hidden;
+
+    /*-webkit-transform: translateZ(0);
+    transform: translateZ(0);*/
+
+    -webkit-bacface-visibility: hidden;
 }
 .m-tozee__list {
     margin-right: 20px;
@@ -9,20 +14,10 @@
     display: block;
 }
 .m-tozee__bar {
-    transform: translateZ(0);
-    -webkit-transform: translateZ(0);
-
     position: absolute;
     top: 0;
     right: 0;
     z-index: 10;
-
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: flex;
-
-    flex-direction: column;
-    -webkit-flex-direction: column;
 
     margin: 0;
     padding: $margin 0;
@@ -31,7 +26,8 @@
     line-height: 1;
     text-transform: uppercase;
 
-    -webkit-backface-visibility: hidden;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    -webkit-tap-highlight-color: transparent; /* For some Androids */
 }
 .m-tozee__bar.m--stick {
     position: fixed;
@@ -40,18 +36,25 @@
 }
 
 .m-tozee__letter {
+
     display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
     display: -webkit-flex;
     display: flex;
 
-    flex: 1 auto;
-    -webkit-flex: 1 auto;
+     -webkit-box-flex: 1;
+    -moz-box-flex: 1;
+    -webkit-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
 
-    align-items: center;
     -webkit-align-items: center;
+    align-items: center;
 
-    justify-content: center;
     -webkit-justify-content: center;
+    justify-content: center;
+
 
     margin: 0;
     padding: 0 10px;
