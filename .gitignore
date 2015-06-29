@@ -5,3 +5,5 @@ npm-debug.log
 localConfig.json
 
 /build/scooch.zip
+
+.DS_Store

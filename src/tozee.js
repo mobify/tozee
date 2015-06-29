@@ -25,7 +25,8 @@
     var Tozee = (function($, Utils) {
         var defaults = {
             alphaSet: ['#', 'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
-          , skipLetters: true
+          , minLetterHeight: 24     // Minimal letter height in pixels
+          , skipLetters: true       // Only display letters that are present in the list VS entire alphabet
           , classPrefix: 'm-'
           , classNames: {
                 outer: 'tozee'
@@ -44,6 +45,7 @@
             this.initElements(element);
 
             this.createBar();
+            this.formatLetters();
             this.bind();
         };
 
@@ -74,12 +76,15 @@
             this.$bar;
         };
 
+
+        // Create alphabet bar
+        // --------------------
         Tozee.prototype.createBar = function() {
             var self = this;
             var barHTML = '<ul class="' + this._getClass('bar') + '">';
 
             // Filter alphabet: find only those letters that exist in the list
-            $.each(this.options.alphaSet, function(_, letter){
+            $.each(this.options.alphaSet, function(_, letter) {
                 if (self.options.skipLetters && !self._getTarget(letter).length) {
                     return;
                 }
@@ -89,21 +94,66 @@
 
             barHTML += '</ul>';
 
+            // Crete bar DOM
             this.$bar = $(barHTML);
-            this.$bar.appendTo(this.$element);
 
-            var $barLetters = this.$bar.find('.' + this._getClass('letter'));
-            $barLetters.css({
-                height: (100 / $barLetters.length) + '%'
-            });
+            // Append bar to the document DOM
+            this.$bar.appendTo(this.$element);
         };
 
 
+        // Format letters
+        // --------------
+        // Calculates height of letters and figures out if any letters
+        // should be skipped due based on their density
+        // e.g in landscape mode
+        Tozee.prototype.formatLetters = function() {
+            var $letters = this.$bar.find('.' + this._getClass('letter'));
+
+            // Update bar height
+            this.$bar.css({
+                height: window.innerHeight
+            });
+
+            // Find what step is required so that letter hight was more than this.options.minLetterHeight
+            var barHeight = this.$bar.height();
+            var letterStep = Math.ceil(this.options.minLetterHeight * $letters.length / barHeight);
+
+            // Display letters according to step rule
+            $.each($letters, function(i, letter) {
+                var $letter = $(letter);
+
+                // Skip letters
+                // NOTE: make sure the first and last one are always visible
+                $letter.prop('hidden', (i > 0 && i < $letters.length && i % letterStep !== 0));
+            });
+
+            // Calculate relative height for visible letters
+            var letterHeight = 100 / $letters.not('[hidden]').length;
+
+            $letters.css({
+                height: letterHeight + '%'
+            });
+
+            // Toggle classname on the bar to indicate if all letters are shown
+            this.$bar.toggleClass('m--short', letterStep > 1);
+        },
+
+
+        // Bind user events
+        // ----------------
         Tozee.prototype.bind = function() {
+            this._bindTouch();
+            this._bindSroll();
+            this._bindResize();
+        };
+
+
+        // Letter touch event handler
+        Tozee.prototype._bindTouch = function() {
             var self = this;
 
-            // Letter touch event handler
-            this.$bar.on('click touchstart touchmove', function(e){
+            this.$bar.on('click touchstart touchmove', function(e) {
                 e.preventDefault();
 
                 var $letter = self._getTouchedLetter(e);
@@ -121,11 +171,11 @@
 
                 return false;
             });
-
-            this._bindSroll();
         };
 
-        Tozee.prototype._bindSroll = function(){
+
+        // Window scrolling event
+        Tozee.prototype._bindSroll = function() {
             var self = this;
 
             // limit positioning of Tozee list sticket to its content when scrolling
@@ -137,20 +187,26 @@
             this._scrollHandler();
 
             // Fix initial appearance
-            // window.setInterval(function(){
+            // window.setInterval(function() {
             //     self._scrollHandler();
             // }, 1);
+        };
+
+         // Window resize / orientation change event
+        Tozee.prototype._bindResize = function() {
+            var self = this;
+
+            $(window).on('orientationchange resize', function() {
+                console.log('resize');
+                self.formatLetters();
+            });
         };
 
         Tozee.prototype._scrollHandler = function() {
             var self = this;
             var top = window.pageYOffset;
-            var limits = this._getLimits();
+            var limits = this._getScrollLimits();
             var stickyClass = this._getClass('sticky');
-
-            this.$bar.css({
-                height: window.innerHeight
-            });
 
             if (top < limits.top) {
                 this.$bar
@@ -184,7 +240,7 @@
             }
 
             var top = $destination.offset().top;
-            var limits = this._getLimits();
+            var limits = this._getScrollLimits();
 
             if (top > limits.bottom) {
                 top = limits.bottom;
@@ -200,7 +256,7 @@
             return this.options.classPrefix + this.options.classNames[id];
         };
 
-        Tozee.prototype._getLimits = function() {
+        Tozee.prototype._getScrollLimits = function() {
             // returns object that contains min and max container top position
             return {
                 'top': this.$element.offset().top,
