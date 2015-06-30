@@ -41,7 +41,9 @@ Constructs the alphabetic bar with options.
 
     $('.m-tozee').tozee({
         alphaSet: ['#', 'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
-        skipLetters: true,
+      , skipLetters: true
+      , minLetterHeight: 24
+      , ignoreResizeDelta: 1
       , classPrefix: 'm-'
       , classNames: {
             outer: 'tozee'
@@ -52,6 +54,14 @@ Constructs the alphabetic bar with options.
           , sticky: '-stick'
         }
     });
+
+`skipLetters (bool)` — if true, only letters present in the list will be displayed. If fallse, all letters A to Z will be displayed, however # symbol would still be conditional if resent in the list.
+
+`minLetterHeight (int)` — minimal height of a single letter. If letters appear to dense, every n-th letter will be skipped to sutisfy this height.
+This is recalculated on orientation change and window resize.
+
+`ignoreResizeDelta (int)` — do not recalculate bar height for minor window resizes (e.g. address bar shown or hidden in mobile browser)
+
 
 ### .tozee('destroy')
 
