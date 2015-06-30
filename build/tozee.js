@@ -25,8 +25,9 @@
     var Tozee = (function($, Utils) {
         var defaults = {
             alphaSet: ['#', 'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
-          , minLetterHeight: 24     // Minimal letter height in pixels
           , skipLetters: true       // Only display letters that are present in the list VS entire alphabet
+          , minLetterHeight: 24     // Minimal letter height in pixels
+          , ignoreResizeDelta: 1   // Ignore resizing for a given delta (e.g. when addres bar is shown)
           , classPrefix: 'm-'
           , classNames: {
                 outer: 'tozee'
@@ -110,14 +111,22 @@
         Tozee.prototype.formatLetters = function() {
             var $letters = this.$bar.find('.' + this._getClass('letter'));
 
+
             // Update bar height
+            if (this.barHeight && Math.abs(window.innerHeight - this.barHeight) < this.options.ignoreResizeDelta) {
+                return false;
+            }
+
+
+            this.barHeight = window.innerHeight;
+
             this.$bar.css({
-                height: window.innerHeight
+                height: this.barHeight
             });
 
             // Find what step is required so that letter hight was more than this.options.minLetterHeight
-            var barHeight = this.$bar.height();
-            var letterStep = Math.ceil(this.options.minLetterHeight * $letters.length / barHeight);
+            var barInnerHeight = this.$bar.height();
+            var letterStep = Math.ceil(this.options.minLetterHeight * $letters.length / barInnerHeight);
 
             // Display letters according to step rule
             $.each($letters, function(i, letter) {
