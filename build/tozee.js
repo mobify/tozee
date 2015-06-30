@@ -235,20 +235,24 @@
             var $destination = this._getTarget(letter);
             var letterIndex = this.options.alphaSet.indexOf(letter);
 
-            // Find closest existing letter in the list if th letter that is touched is not available
-            // First walk up the list to find previous letters
-            while (!$destination.length && letterIndex >= 0) {
-                letterIndex--;
-                $destination = this._getTarget(this.options.alphaSet[letterIndex]);
-            }
-            // Then walk down the list to find next letters
-            while (!$destination.length && letterIndex < this.options.alphaSet.length) {
-                letterIndex++;
-                $destination = this._getTarget(this.options.alphaSet[letterIndex]);
-            }
             if (!$destination.length) {
-                console.log('TOZEE', 'Could not find target for letter', letter);
-                return false;
+                // Find closest existing letter in the list
+                // if the letter that is touched is not represented
+                // First walk up the list to find previous available letter
+                while (!$destination.length && letterIndex >= 0) {
+                    letterIndex--;
+                    $destination = this._getTarget(this.options.alphaSet[letterIndex]);
+                }
+                // Then walk down the list to find next available letter
+                while (!$destination.length && letterIndex < this.options.alphaSet.length) {
+                    letterIndex++;
+                    $destination = this._getTarget(this.options.alphaSet[letterIndex]);
+                }
+
+                if (!$destination.length) {
+                    console.log('TOZEE', 'Could not find target for letter', letter);
+                    return false;
+                }
             }
 
             var top = $destination.offset().top;
@@ -277,7 +281,7 @@
         };
 
         Tozee.prototype._getTarget = function(letter) {
-            return this.$list.find('[data-tozee="' + letter + '"]');
+            return this.$list.find('[data-tozee="' + letter + '"]').first();
         };
 
         Tozee.prototype._getTouchedLetter = function(event) {
@@ -285,7 +289,7 @@
             // Why so complicated?
             // Because touchmove only returns an element that had touchstart and we want constantly update scroll position while moving through the letters
             var $letter;
-            var eTouches = event.touches || event.originalEvent.touches;
+            var eTouches = event.touches || (event.originalEvent && event.originalEvent.touches);
 
             if (eTouches) {
                 // Touch screen

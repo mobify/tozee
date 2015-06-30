@@ -1,6 +1,6 @@
 {
   "name": "tozee",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "A responsive, mobile first scrolling lists alphabetic bar",
   "devDependencies": {
     "grunt": "~0.4.x",

@@ -289,7 +289,7 @@
             // Why so complicated?
             // Because touchmove only returns an element that had touchstart and we want constantly update scroll position while moving through the letters
             var $letter;
-            var eTouches = event.touches || event.originalEvent.touches;
+            var eTouches = event.touches || (event.originalEvent && event.originalEvent.touches);
 
             if (eTouches) {
                 // Touch screen
