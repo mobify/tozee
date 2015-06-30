@@ -85,7 +85,7 @@
 
             // Filter alphabet: find only those letters that exist in the list
             $.each(this.options.alphaSet, function(_, letter) {
-                if (self.options.skipLetters && !self._getTarget(letter).length) {
+                if ((self.options.skipLetters || letter === '#') && !self._getTarget(letter).length) {
                     return;
                 }
 
@@ -125,7 +125,7 @@
 
                 // Skip letters
                 // NOTE: make sure the first and last one are always visible
-                $letter.prop('hidden', (i > 0 && i < $letters.length && i % letterStep !== 0));
+                $letter.prop('hidden', (i > 0 && i < $letters.length-1 && i % letterStep !== 0));
             });
 
             // Calculate relative height for visible letters
@@ -197,7 +197,6 @@
             var self = this;
 
             $(window).on('orientationchange resize', function() {
-                console.log('resize');
                 self.formatLetters();
             });
         };
@@ -234,9 +233,26 @@
 
         Tozee.prototype._callback = function(letter) {
             var $destination = this._getTarget(letter);
+            var letterIndex = this.options.alphaSet.indexOf(letter);
 
             if (!$destination.length) {
-                return false;
+                // Find closest existing letter in the list
+                // if the letter that is touched is not represented
+                // First walk up the list to find previous available letter
+                while (!$destination.length && letterIndex >= 0) {
+                    letterIndex--;
+                    $destination = this._getTarget(this.options.alphaSet[letterIndex]);
+                }
+                // Then walk down the list to find next available letter
+                while (!$destination.length && letterIndex < this.options.alphaSet.length) {
+                    letterIndex++;
+                    $destination = this._getTarget(this.options.alphaSet[letterIndex]);
+                }
+
+                if (!$destination.length) {
+                    console.log('TOZEE', 'Could not find target for letter', letter);
+                    return false;
+                }
             }
 
             var top = $destination.offset().top;
@@ -265,7 +281,7 @@
         };
 
         Tozee.prototype._getTarget = function(letter) {
-            return this.$list.find('[data-tozee="' + letter + '"]');
+            return this.$list.find('[data-tozee="' + letter + '"]').first();
         };
 
         Tozee.prototype._getTouchedLetter = function(event) {
@@ -292,7 +308,7 @@
                 return false;
             }
 
-            console.log(event.touches, $letter.html());
+            console.log('TOZEE', event.touches, $letter.html());
             return $letter;
         };
 
