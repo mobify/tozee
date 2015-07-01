@@ -64,12 +64,20 @@
     -webkit-justify-content: center;
     justify-content: center;
 
+    /* Galaxy S3 fix */
+    -webkit-box-pack: center;
+    box-pack: center;
+
+    -webkit-box-orient: vertical;
+    box-orient: vertical;
+
 
     margin: 0;
     padding: 0 10px;
     list-style: none;
     text-align: center;
 }
+
 .m-tozee__letter[hidden] {
     display: none;
 }
