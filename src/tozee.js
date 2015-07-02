@@ -112,11 +112,10 @@
             var $letters = this.$bar.find('.' + this._getClass('letter'));
 
 
-            // Update bar height
+            // Update bar height if window size has changed more thant ignoreResizeDelta
             if (this.barHeight && Math.abs(window.innerHeight - this.barHeight) < this.options.ignoreResizeDelta) {
                 return false;
             }
-
 
             this.barHeight = window.innerHeight;
 
@@ -147,7 +146,6 @@
             // Toggle classname on the bar to indicate if all letters are shown
             this.$bar.toggleClass('m--short', letterStep > 1);
         },
-
 
         // Bind user events
         // ----------------
@@ -205,8 +203,12 @@
         Tozee.prototype._bindResize = function() {
             var self = this;
 
-            $(window).on('orientationchange resize', function() {
-                self.formatLetters();
+            // NOTE:
+            // Scroll is required to track native address/footer bars toggle in iOS7
+            $(window).on('resize scroll', function() {
+                window.setTimeout(function() {
+                    self.formatLetters();
+                }, 1);
             });
         };
 
