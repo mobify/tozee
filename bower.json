@@ -1,25 +1,26 @@
 {
   "name": "tozee",
-  "version": "0.1.6",
+  "version": "1.0.0",
   "homepage": "https://github.com/mobify/tozee",
   "authors": [
     "Mobify <jobs@mobify.com>"
   ],
-  "description": "A responsive, mobile first scrolling lists alphabetic bar",
-  "main": "build/tozee.min.js",
+  "description": "A mobile first content fly-in UI plugin",
+  "main": "dist/tozee.min.js",
   "keywords": [
     "tozee",
-    "scroll",
-    "alphabetic",
-    "abc",
-    "bar",
+    "fly-in",
+    "modal",
     "mobile",
     "mobify"
   ],
   "license": "MIT",
   "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components"
-  ]
+    "./!(src|dist|lib|templates)"
+  ],
+  "dependencies": {
+        "plugin": "~3.0.0",
+        "requirejs-text": "~2.0.12",
+        "requirejs": "~2.1.14"
+}
 }
