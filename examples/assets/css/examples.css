@@ -1,0 +1,30 @@
+* {
+    box-sizing: border-box;
+}
+
+html {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    -webkit-text-size-adjust: 100%;
+}
+
+
+body {
+    margin: 0;
+    padding: 10px;
+}
+
+.tozee {
+    margin: 0 -10px;
+    padding: 10px;
+}
+
+.tozee h2 {
+    margin: 1em 0 .5em;
+    font-size: 14px;
+}
+
+.tozee ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
