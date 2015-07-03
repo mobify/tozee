@@ -83,6 +83,13 @@
 
         destroy: function() {
             this.$element.removeData(this.name);
+
+            this.$bar.remove();
+            this.$bar = [];
+
+            this.$element
+                .removeClass(classes.STICKY)
+                .removeClass(classes.COMPACT);
         },
 
 
@@ -202,6 +209,10 @@
 
         // Handle Tozee bar position and size change on page
         _positionHandler: function() {
+            if (!this.$bar.length) {
+                return false;
+            }
+
             this._setHeight();
             this._setPosition();
             this._skipLetters();
