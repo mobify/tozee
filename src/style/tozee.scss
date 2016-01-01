@@ -1,0 +1,89 @@
+.tozee {
+    position: relative;
+    overflow: hidden;
+
+    /*-webkit-transform: translateZ(0);
+    transform: translateZ(0);*/
+
+    -webkit-backface-visibility: hidden;
+}
+.tozee__list {
+    margin-right: 20px;
+
+    a {
+        display: block;
+    }
+
+    li {
+        overflow: auto;
+    }
+}
+
+.tozee__bar {
+    box-sizing: border-box;
+
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 10;
+
+    margin: 0;
+    padding: 10px 0;
+
+    font-size: 10px;
+    line-height: 1;
+    text-transform: uppercase;
+
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    -webkit-tap-highlight-color: transparent; /* For some Androids */
+
+    .tozee.sticky & {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+    }
+}
+
+.tozee__letter {
+    position: relative;
+
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+
+    /* Galaxy S3 fix */
+    -webkit-box-pack: center;
+    box-pack: center;
+
+    -webkit-box-orient: vertical;
+    box-orient: vertical;
+
+
+    margin: 0;
+    padding: 0 10px;
+    list-style: none;
+    text-align: center;
+
+    &[hidden] {
+        display: none;
+    }
+}
+
+// Shortened bar (skipping letters)
+.tozee.compact {
+    .tozee__letter {
+        &:before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            line-height: 0;
+        }
+
+        &:first-child:before {
+            display: none;
+        }
+    }
+}
