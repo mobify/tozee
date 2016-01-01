@@ -13,11 +13,13 @@
         TOZEE: 'tozee',
         LIST: 'tozee__list',
         BAR: 'tozee__bar',
+        INNERBAR: 'tozee__bar-inner',
         ITEM: 'tozee__item',
         LETTER: 'tozee__letter',
 
         // Modifiers
         STICKY: 'sticky',
+        OVERFLOWSCROLL: 'scrollable',
         COMPACT: 'compact'
     };
 
@@ -59,8 +61,9 @@
     Tozee.DEFAULTS = {
         alphaSet: ['#', 'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'],
         skipLetters: false,
-        minLetterHeight: 24,
-        resizingDelta: 1
+        minLetterHeight: 20,
+        resizingDelta: 1,
+        overflowScroll: false,
     };
 
 
@@ -72,6 +75,10 @@
 
             if (!this.$items.length) {
                 throw new Error('Tozee must be initialized against an element that contains a non-empty list');
+            }
+
+            if (this.options.overflowScroll) {
+                this.$list.addClass(classes.OVERFLOWSCROLL)
             }
 
             this._createBar();
@@ -97,7 +104,7 @@
         // ===================
         _createBar: function() {
             var self = this;
-            var barHTML = '<ul class="' + classes.BAR + '">';
+            var barHTML = '<nav class="' + classes.BAR + '"><ul class="' + classes.INNERBAR + '">';
 
             // Filter alphabet: find only those letters that exist in the list
             $.each(this.options.alphaSet, function(_, letter) {
@@ -108,10 +115,12 @@
                 barHTML += '<li class="' + classes.LETTER + '"  data-tozee="' + letter + '">' + letter + '</li>';
             });
 
-            barHTML += '</ul>';
+            barHTML += '</ul></nav>';
 
             // Crete bar DOM
             this.$bar = $(barHTML);
+            this.$inner = this.$bar.find('.' + classes.INNERBAR);
+            this.$letters = this.$bar.find('.' + classes.LETTER);
 
             // Append bar to the document DOM
             this.$bar.appendTo(this.$element);
@@ -134,44 +143,42 @@
 
             var letter = this._getTouchedLetter(e);
 
-            // check if touchmove element returns an element within the Tozee list panel
-            if (letter) {
-                this._selectLetter(letter);
-            }
-
-            return false;
+            return this._selectLetter(letter);
         },
 
         // Find letter under touch position
-        _getTouchedLetter: function(event) {
+        _getTouchedLetter: function(e) {
             // Get element under the finger
-            // Why so complicated?
-            // Because touchmove only returns an element that had touchstart and we want constantly update scroll position while moving through the letters
-            var $letter;
-            var eTouches = event.touches || (event.originalEvent && event.originalEvent.touches);
+            // NOTE: touchmove only returns an element that had touchstart and we want constantly update scroll position while moving through the letters
+            var eTouches = e.touches || (e.originalEvent && e.originalEvent.touches);
+            var event = (eTouches) ? eTouches[0] : e;
+            var innerOffset = this.$inner.offset();
+            var letter;
 
-            if (eTouches) {
-                // Touch screen
-                $letter = $(document.elementFromPoint(eTouches[0].pageX - window.pageXOffset, eTouches[0].pageY - window.pageYOffset));
+            // Get touch position in the bar to access even those letters that are currently hidden
+            // The letter is calculated based on the relative position of the tap on the bar.
+            var barTouchedPosition = (event.pageY - innerOffset.top - this.$letters.first().height()/2) / (innerOffset.height - this.$letters.first().height()/2 - this.$letters.last().height()/2);
 
-                    // if (!$letter.length) {
-                    //     // iOS4 and lower calculates elementFromPoint based on document rather than viewport
-                    //     $letter = $(document.elementFromPoint(eTouches[0].pageX, eTouches[0].pageY));
-                    // }
-            } else {
-                // Desktop browser (including Chrome with emulation enabled)
-                $letter = $(event.target);
+            // Track touches outside the bar
+            if (barTouchedPosition < 0 || barTouchedPosition > 1) {
+                return false;
             }
 
-            var letter = $letter.closest('.' + classes.LETTER).attr('data-tozee');
+            var letterTouchedID = Math.round(this.$letters.length  * barTouchedPosition);
+            letter = this.$letters.eq(letterTouchedID).attr('data-tozee');
 
-            console.log('TOZEE', event.touches, letter);
+            console.log(letter, letterTouchedID, this.$letters.length  * barTouchedPosition, barTouchedPosition);
 
             return letter;
         },
 
         // Handle letter selection
         _selectLetter: function(letter) {
+            // check if touchmove element returns an element within the Tozee list panel
+            if (!letter) {
+                return false;
+            }
+
             var $destination = this._getTarget(letter);
             var letterIndex = this.options.alphaSet.indexOf(letter);
 
@@ -195,15 +202,21 @@
                 }
             }
 
-            var top = $destination.offset().top;
-            var limits = this._getScrollLimits();
+            if (this.options.overflowScroll) {
+                var top = this.$list.scrollTop() + $destination.position().top;
+            } else {
+                var top = $destination.offset().top;
+                var limits = this._getScrollLimits();
 
-            if (top > limits.bottom) {
-                top = limits.bottom;
+                if (top > limits.bottom) {
+                    top = limits.bottom;
+                }
             }
 
             this.$element.trigger('tozeeScroll', letter, $destination);
             this._scrollTo(top);
+
+            return true;
         },
 
 
@@ -220,12 +233,14 @@
 
         // Resize Bar
         _setHeight: function() {
+            var newHeight = (this.options.overflowScroll) ? this.$element.height() :  window.innerHeight;
+
             // Update bar height if window size has changed more thant resizingDelta
-            if (this.barHeight && Math.abs(window.innerHeight - this.barHeight) < this.options.resizingDelta) {
+            if (this.barHeight && Math.abs(newHeight - this.barHeight) < this.options.resizingDelta) {
                 return false;
             }
 
-            this.barHeight = window.innerHeight;
+            this.barHeight = newHeight;
 
             this.$bar.css({
                 height: this.barHeight
@@ -235,24 +250,23 @@
         // Figure out if any letters should be skipped due based on their density
         // e.g in landscape mode
         _skipLetters: function() {
-            // Find what step is required so that letter hight was more than this.options.minLetterHeight
-            var $letters = this.$bar.find('.' + classes.LETTER);
-            var barInnerHeight = this.$bar.height();
-            var letterStep = Math.ceil(this.options.minLetterHeight * $letters.length / barInnerHeight);
+            // Find what letters step is required so that letter hight was more than this.options.minLetterHeight
+            var self = this;
+            var letterStep = Math.ceil(this.options.minLetterHeight * this.$letters.length / this.$inner.height());
 
             // Display letters according to step rule
-            $.each($letters, function(i, letter) {
+            $.each(this.$letters, function(i, letter) {
                 var $letter = $(letter);
 
                 // Skip letters
                 // NOTE: make sure the first and last one are always visible
-                $letter.prop('hidden', (i > 0 && i < $letters.length - 1 && i % letterStep !== 0));
+                $letter.prop('hidden', (i > 0 && i < self.$letters.length - 1 && i % letterStep !== 0));
             });
 
             // Calculate relative height for visible letters
-            var letterHeight = 100 / $letters.not('[hidden]').length;
+            var letterHeight = 100 / this.$letters.not('[hidden]').length;
 
-            $letters.css({
+            this.$letters.css({
                 height: letterHeight + '%'
             });
 
@@ -261,6 +275,10 @@
         },
 
         _setPosition: function() {
+            if (this.options.overflowScroll) {
+                return;
+            }
+
             var self = this;
             var top = window.pageYOffset;
             var limits = this._getScrollLimits();
@@ -307,7 +325,11 @@
 
         // Scrolling engine
         _scrollTo: function(top) {
-            window.scrollTo(0, top);
+            if (this.options.overflowScroll) {
+                this.$list.scrollTop(top);
+            } else {
+                window.scrollTo(0, top);
+            }
         }
     });
 

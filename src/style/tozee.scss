@@ -17,6 +17,13 @@
     li {
         overflow: auto;
     }
+
+    &.scrollable {
+        height: 100%;
+        overflow: hidden;
+        overflow-y: scroll;
+        -webkit-overflow-scrolling: touch;
+    }
 }
 
 .tozee__bar {
@@ -42,6 +49,13 @@
         top: 0;
         bottom: 0;
     }
+}
+
+.tozee__bar-inner {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
 }
 
 .tozee__letter {
