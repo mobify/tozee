@@ -157,7 +157,7 @@
 
             // Get touch position in the bar to access even those letters that are currently hidden
             // The letter is calculated based on the relative position of the tap on the bar.
-            var barTouchedPosition = (event.pageY - innerOffset.top - this.$letters.first().height() / 2) / (innerOffset.height - this.$letters.first().height() / 2 - this.$letters.last().height() / 2);
+            var barTouchedPosition = (event.pageY - innerOffset.top - this.$letters.first().height() / 2) / (this.$inner.height() - this.$letters.first().height() / 2 - this.$letters.last().height() / 2);
 
             // Normalize bar tap position
             barTouchedPosition = Math.max(0,  Math.min(1, barTouchedPosition));
