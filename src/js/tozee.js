@@ -63,7 +63,7 @@
         skipLetters: false,
         minLetterHeight: 20,
         resizingDelta: 1,
-        overflowScroll: false,
+        overflowScroll: false
     };
 
 

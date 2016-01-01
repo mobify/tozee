@@ -56,14 +56,14 @@
         Tozee.__super__.call(this, element, options, Tozee.DEFAULTS);
     }
 
-    Tozee.VERSION = '1.0.0';
+    Tozee.VERSION = '1.1.0';
 
     Tozee.DEFAULTS = {
         alphaSet: ['#', 'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'],
         skipLetters: false,
         minLetterHeight: 20,
         resizingDelta: 1,
-        overflowScroll: false,
+        overflowScroll: false
     };
 
 
