@@ -18,12 +18,18 @@ body {
     padding: 10px;
 }
 
+.tozee--overflow {
+    height: 200px;
+    overflow: scroll;
+    -webkit-overflow-scrolling: touch;
+}
+
 .tozee h2 {
     margin: 1em 0 .5em;
     font-size: 14px;
 }
 
-.tozee ul {
+.tozee ul.tozee__list {
     margin: 0;
     padding: 0;
     list-style: none;
