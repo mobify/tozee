@@ -4,7 +4,7 @@
     "type": "git",
     "url": "https://github.com/mobify/tozee.git"
   },
-  "version": "1.1.0",
+  "version": "1.1.2",
   "description": "A mobile first alphabetic scroll jumping list.",
   "devDependencies": {
         "chai": "~1.9.0",

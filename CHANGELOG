@@ -1,3 +1,5 @@
+1.1.2
+    - Fix detecting bar height failing in some environments
 1.1.1
     - Normalize first and last letter tap position detection
 1.1.0
