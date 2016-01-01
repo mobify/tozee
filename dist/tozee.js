@@ -56,7 +56,7 @@
         Tozee.__super__.call(this, element, options, Tozee.DEFAULTS);
     }
 
-    Tozee.VERSION = '1.1.0';
+    Tozee.VERSION = '1.1.2';
 
     Tozee.DEFAULTS = {
         alphaSet: ['#', 'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'],
@@ -78,7 +78,7 @@
             }
 
             if (this.options.overflowScroll) {
-                this.$list.addClass(classes.OVERFLOWSCROLL)
+                this.$list.addClass(classes.OVERFLOWSCROLL);
             }
 
             this._createBar();
@@ -157,7 +157,7 @@
 
             // Get touch position in the bar to access even those letters that are currently hidden
             // The letter is calculated based on the relative position of the tap on the bar.
-            var barTouchedPosition = (event.pageY - innerOffset.top - this.$letters.first().height()/2) / (innerOffset.height - this.$letters.first().height()/2 - this.$letters.last().height()/2);
+            var barTouchedPosition = (event.pageY - innerOffset.top - this.$letters.first().height() / 2) / (this.$inner.height() - this.$letters.first().height() / 2 - this.$letters.last().height() / 2);
 
             // Normalize bar tap position
             barTouchedPosition = Math.max(0,  Math.min(1, barTouchedPosition));
@@ -200,11 +200,14 @@
                 }
             }
 
+            var top;
+            var limits;
+
             if (this.options.overflowScroll) {
-                var top = this.$list.scrollTop() + $destination.position().top;
+                top = this.$list.scrollTop() + $destination.position().top;
             } else {
-                var top = $destination.offset().top;
-                var limits = this._getScrollLimits();
+                top = $destination.offset().top;
+                limits = this._getScrollLimits();
 
                 if (top > limits.bottom) {
                     top = limits.bottom;
