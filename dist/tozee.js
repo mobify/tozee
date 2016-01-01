@@ -159,15 +159,13 @@
             // The letter is calculated based on the relative position of the tap on the bar.
             var barTouchedPosition = (event.pageY - innerOffset.top - this.$letters.first().height()/2) / (innerOffset.height - this.$letters.first().height()/2 - this.$letters.last().height()/2);
 
-            // Track touches outside the bar
-            if (barTouchedPosition < 0 || barTouchedPosition > 1) {
-                return false;
-            }
+            // Normalize bar tap position
+            barTouchedPosition = Math.max(0,  Math.min(1, barTouchedPosition));
 
-            var letterTouchedID = Math.round(this.$letters.length  * barTouchedPosition);
+            var letterTouchedID = Math.round((this.$letters.length - 1) * barTouchedPosition);
             letter = this.$letters.eq(letterTouchedID).attr('data-tozee');
 
-            console.log(letter, letterTouchedID, this.$letters.length  * barTouchedPosition, barTouchedPosition);
+            console.log(letter, letterTouchedID, (this.$letters.length - 1)  * barTouchedPosition, barTouchedPosition);
 
             return letter;
         },

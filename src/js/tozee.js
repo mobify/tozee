@@ -78,7 +78,7 @@
             }
 
             if (this.options.overflowScroll) {
-                this.$list.addClass(classes.OVERFLOWSCROLL)
+                this.$list.addClass(classes.OVERFLOWSCROLL);
             }
 
             this._createBar();
@@ -157,17 +157,15 @@
 
             // Get touch position in the bar to access even those letters that are currently hidden
             // The letter is calculated based on the relative position of the tap on the bar.
-            var barTouchedPosition = (event.pageY - innerOffset.top - this.$letters.first().height()/2) / (innerOffset.height - this.$letters.first().height()/2 - this.$letters.last().height()/2);
+            var barTouchedPosition = (event.pageY - innerOffset.top - this.$letters.first().height() / 2) / (innerOffset.height - this.$letters.first().height() / 2 - this.$letters.last().height() / 2);
 
-            // Track touches outside the bar
-            if (barTouchedPosition < 0 || barTouchedPosition > 1) {
-                return false;
-            }
+            // Normalize bar tap position
+            barTouchedPosition = Math.max(0,  Math.min(1, barTouchedPosition));
 
-            var letterTouchedID = Math.round(this.$letters.length  * barTouchedPosition);
+            var letterTouchedID = Math.round((this.$letters.length - 1) * barTouchedPosition);
             letter = this.$letters.eq(letterTouchedID).attr('data-tozee');
 
-            console.log(letter, letterTouchedID, this.$letters.length  * barTouchedPosition, barTouchedPosition);
+            console.log(letter, letterTouchedID, (this.$letters.length - 1)  * barTouchedPosition, barTouchedPosition);
 
             return letter;
         },
@@ -202,11 +200,14 @@
                 }
             }
 
+            var top;
+            var limits;
+
             if (this.options.overflowScroll) {
-                var top = this.$list.scrollTop() + $destination.position().top;
+                top = this.$list.scrollTop() + $destination.position().top;
             } else {
-                var top = $destination.offset().top;
-                var limits = this._getScrollLimits();
+                top = $destination.offset().top;
+                limits = this._getScrollLimits();
 
                 if (top > limits.bottom) {
                     top = limits.bottom;

@@ -1,3 +1,5 @@
+1.1.1
+    - Normalize first and last letter tap position detection
 1.1.0
     - Update ToZee to be applied to lists with overflow scrolling (`overflowScroll` option)
 1.0.0
