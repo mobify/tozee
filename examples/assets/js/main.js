@@ -4,6 +4,9 @@ require(['config'], function() {
         'tozee'
     ],
     function($) {
-        $('#myTozee').tozee({});
+        $('#myTozee').tozee();
+        $('#myTozeeOverflow').tozee({
+            overflowScroll: true
+        });
     });
 });

@@ -7,3 +7,5 @@ localConfig.json
 /build/scooch.zip
 
 .DS_Store
+
+.sass-cache/
